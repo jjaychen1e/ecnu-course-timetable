@@ -185,13 +185,13 @@ class Crawler:
             # 课程星期偏移值
             week_offset_list: [int] = []
             # 单次周的课
-            single_week_match_results = re.findall(r"\[\d+\]", week_line)
+            single_week_match_results = re.findall(r"\[\d+]", week_line)
             for single_week_match_result in single_week_match_results:
                 week_offset_list.append(int(single_week_match_result[1:-1]))
 
-            other_week_match_results = re.findall(r"单?双?\[\d+-\d+\]", week_line)
+            other_week_match_results = re.findall(r"单?双?\[\d+-\d+]", week_line)
             for other_week_match_result in other_week_match_results:
-                week_info_match_results = re.search(r"\[(\d+)-(\d+)\]", other_week_match_result)
+                week_info_match_results = re.search(r"\[(\d+)-(\d+)]", other_week_match_result)
                 if len(week_info_match_results.groups()) != 2:
                     raise Exception("课程信息解析出错")
                 week_offset_begin = int(week_info_match_results.group(1))
@@ -209,7 +209,7 @@ class Crawler:
                     for week_offset in range(week_offset_begin, week_offset_end + 1):
                         week_offset_list.append(week_offset)
 
-            location = re.sub(r".*\]", "", week_line)
+            location = re.sub(r".*]", "", week_line)
             location = re.sub(r",", " ", location)
             location = location.strip()
 
