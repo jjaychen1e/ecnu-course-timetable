@@ -5,8 +5,8 @@ import pytesseract
 import os
 import re
 import execjs
-from icalendar import Calendar, Event, Alarm
 
+from icalendar import Calendar, Event, Alarm
 from typing import *
 from PIL import Image
 from time import time
