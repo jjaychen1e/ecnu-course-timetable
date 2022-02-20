@@ -226,6 +226,7 @@ class Crawler:
                                                                            hours=lesson_end_time_hour_minute[0],
                                                                            minutes=lesson_end_time_hour_minute[1])
             for week_offset in week_offset_list:
+                week_offset -= 1
                 lesson_begin_datetime = lesson_begin_datetime_standard + timedelta(weeks=week_offset)
                 lesson_end_datetime = lesson_end_datetime_standard + timedelta(weeks=week_offset)
                 lesson = Lesson(course=course, location=location, start_date_time=lesson_begin_datetime,
@@ -269,12 +270,6 @@ class Crawler:
             event.add("uid", str(uuid.uuid4()))
             event.add("dtstart", lesson.start_date_time)
             event.add("dtend", lesson.end_date_time)
-
-            alarm = Alarm()
-            alarm.add("action", "audio")
-            alarm.add("trigger", timedelta(minutes=-30))
-            alarm.add("description", "30 minutes before")
-            event.add_component(alarm)
 
             cal.add_component(event)
 
