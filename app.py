@@ -11,6 +11,8 @@ def hello_world():
     password = request.args.get('password')
     year = request.args.get('year')
     semester_index = request.args.get('semester_index')
+    if not semester_index:
+        semester_index = request.args.get('semesterIndex')
 
     if username is None or password is None or year is None or semester_index is None:
         return Response("Missing parameters", status=400)
@@ -34,4 +36,4 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8181)
