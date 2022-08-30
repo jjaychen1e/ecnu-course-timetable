@@ -7,6 +7,12 @@ app = Flask(__name__)
 
 @app.route('/ecnu-service/course-calendar', methods=['GET'])
 def hello_world():
+    # redirect to https://ecnu.im/d/897
+    response = Response()
+    response.status_code = 301
+    response.headers['Location'] = 'https://ecnu.im/d/897'
+    return response
+
     username = request.args.get('username')
     password = request.args.get('password')
     year = request.args.get('year')

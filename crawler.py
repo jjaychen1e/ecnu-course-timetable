@@ -105,7 +105,7 @@ class Crawler:
         course_list: List[Course] = []
         skipped_course_index_list: List[int] = []
 
-        course_type_match_results: List[str] = re.findall(r"</a></td>\n<td>(.*?)</td><td>", content)
+        course_type_match_results: List[str] = re.findall(r"</a></td>\s*?<td>(.*?)</td><td>", content)
         for index, course_type_match_result in enumerate(course_type_match_results):
             if course_type_match_result == "&#30740;&#31350;&#29983;&#35838;&#31243;":
                 # 存在研究生课程, 跳过
@@ -116,12 +116,12 @@ class Crawler:
             if index not in skipped_course_index_list:
                 course_id_list.append(course_id_match_result)
 
-        course_name_match_results: List[str] = re.findall(r"\">(.*)</a></td>", content)
+        course_name_match_results: List[str] = re.findall(r"\">(.*?)</a></td>", content)
         for index, course_name_match_result in enumerate(course_name_match_results):
             if index not in skipped_course_index_list:
                 course_name_list.append(course_name_match_result)
 
-        course_instructor_match_results: List[str] = re.findall(r"\t\t<td>(.*?)</td>\n\t", content)
+        course_instructor_match_results: List[str] = re.findall(r"</td>\t\t<td>(.*?)</td>\r\n\t\t", content)
         for index, course_instructor_match_result in enumerate(course_instructor_match_results):
             if index not in skipped_course_index_list:
                 course_instructor_list.append(course_instructor_match_result.replace("<br/>", " "))
@@ -185,13 +185,13 @@ class Crawler:
             # 课程星期偏移值
             week_offset_list: [int] = []
             # 单次周的课
-            single_week_match_results = re.findall(r"\[\d+]", week_line)
+            single_week_match_results = re.findall(r"\[\d+\]", week_line)
             for single_week_match_result in single_week_match_results:
                 week_offset_list.append(int(single_week_match_result[1:-1]))
 
-            other_week_match_results = re.findall(r"单?双?\[\d+-\d+]", week_line)
+            other_week_match_results = re.findall(r"单?双?\[\d+-\d+\]", week_line)
             for other_week_match_result in other_week_match_results:
-                week_info_match_results = re.search(r"\[(\d+)-(\d+)]", other_week_match_result)
+                week_info_match_results = re.search(r"\[(\d+)-(\d+)\]", other_week_match_result)
                 if len(week_info_match_results.groups()) != 2:
                     raise Exception("课程信息解析出错")
                 week_offset_begin = int(week_info_match_results.group(1))
@@ -240,15 +240,18 @@ class Crawler:
 
         login_status: bool = self.login()
         if not login_status:
+            print(f'login failed {self.username}')
             return False, "Failed to login"
 
         ids: str = self.get_ids()
         if ids == "":
+            print(f'get_ids failed {self.username}')
             return False, "ids is null"
 
         try:
             courses = self.get_courses(ids=ids)
         except Exception as e:
+            print(f'get_courses failed {self.username}')
             return False, str(e)
 
         lessons: List[Lesson] = []
@@ -256,6 +259,7 @@ class Crawler:
             lessons.extend(self.get_lessons(course))
 
         if len(lessons) == 0:
+            print(f'get_lessons failed {self.username}')
             return False, "No lessons detected"
 
         cal = Calendar()
